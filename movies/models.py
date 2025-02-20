@@ -51,3 +51,18 @@ class Actor(models.Model):
                 name='actor_must_have_ongoing_movie'
             )
         ]
+
+class Theatre(models.Model):
+    name = models.TextField()
+    location = models.IntegerField()
+    capacity = models.PositiveSmallIntegerField(default=-10)
+    movies = models.ManyToManyField('Movie', related_name='theatres', blank=True)
+    producer = models.ForeignKey('Producer', on_delete=models.CASCADE, null=True, blank=True)
+    opening_date = models.CharField(max_length=10)
+    updated_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['capacity']),
+            models.Index(fields=['producer']),
+        ]
