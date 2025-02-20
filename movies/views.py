@@ -26,7 +26,22 @@ class RetrieveUpdateDestroyMovieAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
+class TheatreView(APIView):
+    def get(self, request):
+        theatres = Theatre.objects.all()
+        data = [{"name": theatre.name, "location": theatre.location} for theatre in theatres]
+        return JsonResponse(data, safe=False)
 
+    def post(self, request):
+        theatre = Theatre.objects.create(
+            name=request.data.get('name'),
+            location=request.data.get('location'),
+            capacity=request.data.get('capacity', -1),
+            opening_date=request.data.get('opening_date')
+        )
+        return JsonResponse({"message": "Theatre created", "id": theatre.id})
 
-
-
+    def delete(self, request):
+        theatre_id = request.GET.get('id')
+        Theatre.objects.filter(id=theatre_id).delete()
+        return JsonResponse({"message": "Theatre deleted"})
